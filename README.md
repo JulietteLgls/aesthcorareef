@@ -2,6 +2,8 @@
 
 R code and data to reproduce figures and appendices of Langlois et al.'s 2021 article: "An integrated approach to measure aesthetic and ecological values of coralligenous reefs"
 
+[![DOI](https://zenodo.org/badge/334907501.svg)](https://zenodo.org/badge/latestdoi/334907501)
+
 <hr />
 
 ## General
