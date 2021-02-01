@@ -1,0 +1,37 @@
+Package: esthecorareef
+Title: Supplementary materail to the article "An integrated approach to measure aesthetic and ecological values of coralligenous reefs"
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Juliette",
+           family = "Langlois",
+           role = c("aut", "cre"),
+           email = "juliette.a.langlois@gmail.com")
+Description: Provides data and code to reprocduce the figures and appendix of the Langlois et al.'s 2021 paper.
+License: MIT + file LICENSE
+ByteCompile: true
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports: 
+    ade4,
+    ape,
+    circlize,
+    cowplot,
+    dplyr,
+    egg,
+    factoextra,
+    geosphere,
+    ggplot2,
+    ggpubr,
+    here,
+    imager,
+    magick,
+    nlme,
+    parallel,
+    RColorBrewer,
+    roxygen2,
+    scales,
+    shape,
+    useful,
+    viridis
