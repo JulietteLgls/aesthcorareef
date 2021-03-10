@@ -1,8 +1,8 @@
 ###################################################################################################
-#' Appendix S7: Relationships between the taxonomic, functional and phylogenetic ranks of the 
+#' Appendix G: Relationships between the taxonomic, functional and phylogenetic ranks of the 
 #' quadrats.
 #' 
-#' This script produces the Langlois et al.'s 2021 paper Appendix S7, i.e. a three panels 
+#' This script produces the Langlois et al.'s 2021 paper Appendix G, i.e. a three panels 
 #' scatterplot representing the relationship between  qPDSES rank and TD rank (right), qFDSES rank 
 #' and TD rank (middle) and qPDSES rank and qFDSES rank (right).
 #' 
@@ -11,7 +11,7 @@
 #'         François Guilhaumon, \email{francois.guilhaumon@@ird.fr}
 #'
 #' @date 2021/01/12
-##################################################################################################
+###################################################################################################
 
 # Load data ----
 
@@ -41,8 +41,10 @@ SES_qFD$rank <- seq(1, nrow(SES_qFD),1)
 SES_qFD      <- SES_qFD[order(SES_qFD$quadrat_code),]
 
 # bind the 3 ranks, sum them and compute the ecological rank
-ecovalue           <- cbind.data.frame(quadrat_code = qTD$quadrat_code, TD_rank = qTD$rank, PD_rank = SES_qPD$rank, FD_rank = SES_qFD$rank)
-ecovalue$sum       <- apply(ecovalue[,which(colnames(ecovalue) %in% c("TD_rank", "PD_rank", "FD_rank"))], 1, sum)
+ecovalue           <- cbind.data.frame(quadrat_code = qTD$quadrat_code, TD_rank = qTD$rank, 
+                                       PD_rank = SES_qPD$rank, FD_rank = SES_qFD$rank)
+ecovalue$sum       <- apply(ecovalue[,which(colnames(ecovalue) %in% 
+                                              c("TD_rank", "PD_rank", "FD_rank"))], 1, sum)
 ecovalue           <- ecovalue[order(ecovalue$sum),]
 ecovalue$eco_rank  <- seq(1, nrow(ecovalue),1)
 ecovalue           <- ecovalue[order(ecovalue$quadrat_code),]
@@ -87,7 +89,7 @@ modpdfd <- lm(FD_rank ~ PD_rank, data = ecovalue)
 
 threed <- ggpubr::ggarrange(tdpd, tdfd, pdfd, ncol = 3, nrow = 1)
 
-ggplot2::ggsave(filename = hh("output", "10_AppendixS7_FigureS1.pdf"), plot = threed, 
+ggplot2::ggsave(filename = hh("output", "10_AppendixG_FigureG1.pdf"), plot = threed, 
        width = 18, height = 9, units = "cm", dpi = 320, family = "sans")
 # ----
 
@@ -102,11 +104,12 @@ esth           <- esth[order(esth$quadrat_code),]
 # Save ----
 
 esth_eco_rank <- merge(x = ecovalue, y = esth, by = "quadrat_code")
-table <- merge(table, esth_eco_rank[,-which(colnames(esth_eco_rank) == "esth_score")], by = "quadrat_code")
+table <- merge(table, esth_eco_rank[,-which(colnames(esth_eco_rank) == "esth_score")],
+               by = "quadrat_code")
 
 save(table, file = hh("output", "10_quadrat_pressure_hillses_ranks.RData"))
 
-rm(table, ecovalue, esth, esth_eco_rank, modpdfd, modtdpd, modtdfd, pdfd, tdfd, tdpd, qTD, SES_qFD, SES_qPD, threed, 
-   col, pal)
+rm(table, ecovalue, esth, esth_eco_rank, modpdfd, modtdpd, modtdfd, pdfd, tdfd, tdpd, qTD,
+   SES_qFD, SES_qPD, threed, col, pal)
 
 # ----

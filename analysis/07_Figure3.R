@@ -10,11 +10,11 @@
 #'         François Guilhaumon, \email{francois.guilhaumon@@ird.fr}
 #'
 #' @date 2021/01/12
-##################################################################################################
+###################################################################################################
 
 # Load data ----
 
-effect      <- read.csv(hh("output", "06_AppendixS6_TableS1.csv"))
+effect      <- read.csv(hh("output", "06_AppendixF_TableF1.csv"))
 phylo_table <- read.csv(hh("data", "phylo_table.csv"))
 
 # ----
@@ -39,7 +39,8 @@ effect           <- as.data.frame(effect)
 effect           <- effect[,-which(colnames(effect) == "Name")]
 colnames(effect) <- c("ID_code", "effect", "std_error")
 effect_clado     <- merge(effect, effect_clado, by = "ID_code")
-class            <- effect_clado[,c("ID_code","id_name", "Family", "Order","Class", "Phylum", "effect")]
+class            <- effect_clado[,c("ID_code","id_name", "Family", "Order","Class", "Phylum",
+                                    "effect")]
 
 group1     <- c("family_54", "family_77", "family_36")
 group2     <- c("order_7", "order_42")                
@@ -108,7 +109,8 @@ par(mar = c(0,0,0,0), bg = NA)
 sp_barplot <-
   ggplot2::ggplot(data = class_bygrp, ggplot2::aes(x = ID_code, y = effect )) +
   ggplot2::geom_bar(fill =  class_bygrp$colclas, stat = "identity") +
-  ggplot2::facet_grid(~group, scales = "free_x", space = "free_x") + # create facets by groups + same size for all bars
+  ggplot2::facet_grid(~group, scales = "free_x", space = "free_x") + # create facets by groups 
+                                                                     # and same size for all bars
   ggplot2::theme_light() +
   ggplot2::theme(panel.grid = ggplot2::element_blank(),
                  panel.grid.major = ggplot2::element_blank(),
@@ -127,6 +129,7 @@ sp_barplot <-
   ggplot2:: geom_hline(yintercept = 0, linetype = "solid",
                        color = "red", size = 0.7)
 # save
-ggplot2::ggsave(plot = sp_barplot, filename = hh("output", "07_Figure3.pdf"), height = 8, width = 20, units = "cm", limitsize = FALSE)
+ggplot2::ggsave(plot = sp_barplot, filename = hh("output", "07_Figure3.pdf"), height = 8, 
+                width = 20, units = "cm", limitsize = FALSE)
 
 # ----

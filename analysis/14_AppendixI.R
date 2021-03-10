@@ -1,8 +1,8 @@
 ###################################################################################################
-#' Appendix S9: Relationship between the aesthetic values and the depth of all stations and between 
+#' Appendix I: Relationship between the aesthetic values and the depth of all stations and between 
 #' the aesthetic values and the longitude of the stations at the east of Marseille.
 #' 
-#' This script produces the Langlois et al.'s 2021 paper Appendix S9 Figure S1, i.e.
+#' This script produces the Langlois et al.'s 2021 paper Appendix I Figure I.1, i.e.
 #' a two panels scatterplot of the relationship between the aesthetic values and the depth of all 
 #' stations (left) and the relationship between the aesthetic values and the longitude of the 
 #' stations at the east of Marseille (right).
@@ -12,7 +12,7 @@
 #'         François Guilhaumon, \email{francois.guilhaumon@@ird.fr}
 #'
 #' @date 2021/01/12
-##################################################################################################
+###################################################################################################
 
 # Load data ----
 
@@ -25,7 +25,8 @@ col <- viridis::viridis(4)
 # esth ~depth on stations ----
 poly_depth <- ggplot2::ggplot(table_station, ggplot2::aes(x = depth, y = esth_score)) +
   ggplot2::geom_point(size = 3, shape = 20, col = col[2]) + 
-  ggplot2::geom_smooth(method = lm, data = table_station, formula = y ~ poly(x = x, degree = 2), col = col[4], se = FALSE) +
+  ggplot2::geom_smooth(method = lm, data = table_station, formula = y ~ poly(x = x, degree = 2),
+                       col = col[4], se = FALSE) +
   ggplot2::theme_light() + 
   ggplot2::theme(text = ggplot2::element_text(size = 12),
         axis.title = ggplot2::element_text(size = 12),
@@ -63,7 +64,8 @@ modmars <- lm(marseast$esth_score ~ marseast$longitude)
 # Save ----
 
 plots <- ggpubr::ggarrange(poly_depth, longmars, ncol = 2)
-ggplot2::ggsave(plots, filename = hh("output", "14_AppendixS9_FigureS1.pdf"), width = 20, height = 10, units = "cm")
+ggplot2::ggsave(plots, filename = hh("output", "14_AppendixI_FigureI1.pdf"), width = 20,
+                height = 10, units = "cm")
 
 rm(list=ls(all=TRUE))
 

@@ -1,8 +1,8 @@
 # Hill numbers functions
 
-# The functions of this scipt compute Hill numbers of given assemblages and determine which value of q maximizes 
-# the equation E~(D**q). D stands for TD (taxonomic diversity), PD (phylogenetic diversity) and FD (functional diversity). 
-# The article of Chao et al., 2014 is used as reference.                                                                 
+# The functions of this scipt compute Hill numbers of given assemblages and determine which value
+# of q maximizes the equation E~(D**q). D stands for TD (taxonomic diversity), PD (phylogenetic
+# diversity) and FD (functional diversity). The article of Chao et al., 2014 is used as reference.                                                                 
 
 #' hill_taxa
 #' computes the taxonomic hill number of each row of a gic-ven matrix 
@@ -63,22 +63,29 @@ hill_taxa <- function(comm, q = 0, MARGIN = 1, base = exp(1)) { # adapted from h
 #' @return a tree chain
 #' @export
 create_tree_chain <- function(data){
-  genuses         <- c(lapply(unique(data$Genus), function(gen) paste0("(", paste(data$species[which(data$Genus %in% gen) ], collapse = ","), ")")))
+  genuses         <- c(lapply(unique(data$Genus), function(gen) paste0("(", paste(data$species[
+    which(data$Genus %in% gen) ], collapse = ","), ")")))
   names(genuses)  <- unique(data$Genus)
   
-  families        <- c(lapply(unique(data$Family), function(fam) paste0("(",paste(genuses[which(names(genuses) %in% data$Genus[which(data$Family %in% fam) ])], collapse = ","), ")")))
+  families        <- c(lapply(unique(data$Family), function(fam) paste0("(",paste(genuses[
+    which(names(genuses) %in% data$Genus[which(data$Family %in% fam) ])], collapse = ","), ")")))
   names(families) <- unique(data$Family)
   
-  orders          <- c(lapply(unique(data$Order), function(ord) paste0("(",paste(families[which(names(families) %in% data$Family[which(data$Order %in% ord)]) ], collapse = ","), ")")))
+  orders          <- c(lapply(unique(data$Order), function(ord) paste0("(",paste(families[
+    which(names(families) %in% data$Family[which(data$Order %in% ord)]) ], collapse = ","), ")")))
   names(orders)   <- unique(data$Order)
   
-  classes         <- c(lapply(unique(data$Class), function(clas) paste0("(",paste(orders[which(names(orders) %in% data$Order[which(data$Class %in% clas)])], collapse = ","), ")")))
+  classes         <- c(lapply(unique(data$Class), function(clas) paste0("(",paste(orders[
+    which(names(orders) %in% data$Order[which(data$Class %in% clas)])], collapse = ","), ")")))
   names(classes)  <- unique(data$Class)
   
-  phylums         <- c(lapply(unique(data$Phylum), function(phy) paste0("(",paste(classes[which(names(classes) %in% data$Class[which(data$Phylum %in% phy)])], collapse = ","), ")")))
+  phylums         <- c(lapply(unique(data$Phylum), function(phy) paste0("(",paste(classes[
+    which(names(classes) %in% data$Class[which(data$Phylum %in% phy)])], collapse = ","), ")")))
   names(phylums)  <- unique(data$Phylum)
   
-  kingdoms        <- paste(lapply(unique(data$Kingdom), function(phy) paste0("(",paste(phylums[which(names(phylums) %in% data$Phylum[which(data$Kingdom %in% phy)])], collapse = ","), ")")), collapse = ",")
+  kingdoms        <- paste(lapply(unique(data$Kingdom), function(phy) paste0("(",paste(phylums[
+    which(names(phylums) %in% data$Phylum[which(data$Kingdom %in% phy)])], collapse = ","), ")")),
+    collapse = ",")
 } # eo create_tree_chain
 
 #' dat_prep_phylo
@@ -96,7 +103,8 @@ dat_prep_phylo    <- function(comm, tree) { # from HillR package
   phyloData <- ade4::newick2phylog(tree)
   comm      <- as.matrix(comm[, names(phyloData$leaves)])  # resort sp
   nodenames <- c(names(phyloData$leaves), names(phyloData$nodes))
-  M         <- matrix(0, nrow = ncol(comm), ncol = length(nodenames), dimnames = list(names(phyloData$leaves),nodenames))
+  M         <- matrix(0, nrow = ncol(comm), ncol = length(nodenames), 
+                      dimnames = list(names(phyloData$leaves), nodenames))
   for (i in 1:nrow(M)) {
     M[i, ][unlist(phyloData$paths[i])] <- 1
   } # eo for i
@@ -118,7 +126,8 @@ dat_prep_phylo    <- function(comm, tree) { # from HillR package
 #'
 #' @return a vector of PD
 #' @export
-relab_hill_phylo  <- function(comm, tree, q = 0, base = exp(1), rel_then_pool = TRUE, show.warning = TRUE) { # from HillR package
+relab_hill_phylo  <- function(comm, tree, q = 0, base = exp(1), rel_then_pool = TRUE,
+                              show.warning = TRUE) { # from HillR package
   if (any(comm < 0))
     stop("Negative value in comm data")
   # if(any(colSums(comm) == 0) & show.warning) warning('Some species in comm data were
@@ -131,7 +140,8 @@ relab_hill_phylo  <- function(comm, tree, q = 0, base = exp(1), rel_then_pool = 
   
   if (length(setdiff(tree$tip.label, comm_sp))) {
     if (show.warning)
-      warning("Some species in the phylogeny but not in comm, \n remove them from the phylogeny...")
+      warning("Some species in the phylogeny but not in comm,
+              \n remove them from the phylogeny...")
     tree <- ape::drop.tip(tree, tree$tip.label[!tree$tip.label %in% comm_sp])
   } # eo if 
   
@@ -176,7 +186,8 @@ relab_hill_phylo  <- function(comm, tree, q = 0, base = exp(1), rel_then_pool = 
 
 #' FD_MLE
 #' R code for obtaining functional diversity (FD) based on Chao et al. (2018) 
-#' Please cite Chao et al. (2018) An attribute-diversity approach to functional diversity, functional beta diversity, and related (dis)similarity measures. 
+#' Please cite Chao et al. (2018) An attribute-diversity approach to functional diversity,
+#' functional beta diversity, and related (dis)similarity measures. 
 #' Functional Diversity of a single site for specified values of tau and q
 #' FD_MLE (data, dij, tau, q) is a function of obtaining FD index of order q.
 #' @param data a vector of species sample frequencies.
@@ -205,29 +216,31 @@ FD_MLE   <- function(data, dij, tau, q){
 } # eo FD_MLE
 
 #' find_bestq
-#'This function computes the hill numbers for TD/PD/FD with q_nb different q between q_min and q_max
-#' it selects the q for wich the r² of lm(esth_score~hill_number) is maximized and finally compute the
-#' hill numbers for this q
+#' This function computes the hill numbers for TD/PD/FD with q_nb different q between q_min and
+#' q_max it selects the q for wich the r² of lm(esth_score~hill_number) is maximized and finally
+#' compute the hill numbers for this q
 #' @param div  the diversity worked with : c(TD,PD,FD)
 ##              if div = TD, hillfun = hill_taxa
 ##              if div = PD, hillfun = relab_hill_phylo
 ##              if div = FD, hillfun = FD_MLE
-#' @param data matrix of relative abundance. Quadrat_code must be rownames and Species_name must be colnames
-##              for div = PD, colnames = id_name of the species, for div = TD or FD colnames(data) = id_code 
-##              of the species
+#' @param data matrix of relative abundance. Quadrat_code must be rownames and Species_name must be
+#'              colnames for div = PD, colnames = id_name of the species, for div = TD or FD 
+#'              colnames(data) = id_code of the species
 #' @param tree  phylotree generated by ape::read_tree. Default is NULL. Only needed if div = PD
 #' @param dij distance matrix generated by ade4::dist.kab (Pavoine et al. 2009). Default is NULL. 
 ##              Only needed if div = FD
-#' @param tau threshold for dij (Chao et al. 2019). Default is NULL, recommended value is mean(dij). 
-##              Only needed if div = FD
-#' @param esth a two columns matrix of the aesthetic scores. rownames(esth) must be the same than rownames(data).
-##               first column is quadrat_code and second one is esth_score
+#' @param tau threshold for dij (Chao et al. 2019). Default is NULL, recommended value is
+#'              mean(dij). Only needed if div = FD.
+#' @param esth a two columns matrix of the aesthetic scores. rownames(esth) must be the same than
+#'               rownames(data). First column is quadrat_code and second one is esth_score.
 #' @param q_min min value for q
 #' @param q_max max value for q
 #' @param q_nb number of values to test for q in range q_min;q_max
 #' @param ncores number of cores to use
-#' @param log_trans logical. Default is FALSE. if TRUE the tested relation is lm(log(esth)~log(hill_index))
-##              esth must be already log transformed when entered in the function if log_trans == TRUE
+#' @param log_trans logical. Default is FALSE. if TRUE the tested relation is 
+#'                  lm(log(esth)~log(hill_index)) 
+#'                  esth must be already log transformed when entered in the function if 
+#'                  log_trans == TRUE
 #'
 #' @return hill_number_q -> vector of the hill number with q maximizing the R² for all assemblages
 #'         bestq         -> the q maximizing the R² of lm(esth_score~hill_number)
@@ -235,8 +248,10 @@ FD_MLE   <- function(data, dij, tau, q){
 #'         all_r2_q      -> all q value tested and the associated R²
 #' @export
 
-find_bestq <- function(div, data, tree = NULL, dij = NULL, tau = NULL, esth, q_min, q_max, q_nb, ncores, log_trans = FALSE){
-  # div = "PD"; data = relab; tree = tree; esth = esth; q_min = -1; q_max = 1; q_nb = 10; ncores = 4; log_trans = log_trans
+find_bestq <- function(div, data, tree = NULL, dij = NULL, tau = NULL, esth, q_min, q_max, q_nb,
+                       ncores, log_trans = FALSE){
+  # div = "PD"; data = relab; tree = tree; esth = esth; q_min = -1; q_max = 1; q_nb = 10;
+  # ncores = 4; log_trans = log_trans
   colnames(esth) <- c("quadrat_code", "esth_score")
   Q              <- seq(q_min, q_max, length.out = q_nb)
   R2             <- do.call(rbind, parallel::mclapply(X = Q, FUN = function(q){
@@ -269,7 +284,8 @@ find_bestq <- function(div, data, tree = NULL, dij = NULL, tau = NULL, esth, q_m
     Hill_number_q  <- relab_hill_phylo(data, tree, bestq$q)
   } #eo if PD
   if (div == "FD"){
-    Hill_number_q  <- apply(relab, 1, function(assemblage){ FD_MLE(data = assemblage, dij = dis_traits_cora, tau = tau, q = bestq$q )})
+    Hill_number_q  <- apply(relab, 1, function(assemblage){
+      FD_MLE(data = assemblage, dij = dis_traits_cora, tau = tau, q = bestq$q )})
   } #eo if FD
   
   if(log_trans == TRUE){ Hill_number_q <- log(Hill_number_q)}

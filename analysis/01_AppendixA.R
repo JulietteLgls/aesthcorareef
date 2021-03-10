@@ -1,7 +1,7 @@
 ###################################################################################################
-#' Appendix S1: Temporality of biodiversity data.
+#' Appendix A: Temporality of biodiversity data.
 #'
-#'This script produces the Langlois et al.'s 2021 paper Appendix S1, i.e.
+#'This script produces the Langlois et al.'s 2021 paper Appendix A, i.e.
 #' a grid indicating the year each station has been sampled.
 #'
 #' @author Juliette Langlois, \email{juliette.a.langlois@@gmail.com},
@@ -9,7 +9,7 @@
 #'         François Guilhaumon, \email{francois.guilhaumon@@ird.fr}
 #'
 #' @date 2021/01/12
-##################################################################################################
+###################################################################################################
 
 # Load data ----
 table <- read.csv(hh("data", "quadrat_table.csv"))
@@ -30,10 +30,12 @@ cols        <- gray.colors(n = max(nb_sta_pery)+1, start = 1, end = 0, gamma = 2
 # corsica
 data_corse          <- table[which(table$region %in% "Corse"),]
 data_corse          <- data_corse[order(data_corse$latitude, decreasing = TRUE),]
-data_corse$site     <- factor(data_corse$site, levels = unique(data_corse$site[order(data_corse$latitude)]))
+data_corse$site     <- factor(data_corse$site, 
+                              levels = unique(data_corse$site[order(data_corse$latitude)]))
 
 data_corse          <- unique(data_corse[, c("site", "station", "year", "latitude")])
-data_corse$site     <- factor(data_corse$site, levels = unique(data_corse$site[order(data_corse$latitude)]))
+data_corse$site     <- factor(data_corse$site, 
+                              levels = unique(data_corse$site[order(data_corse$latitude)]))
 data_corse          <- data_corse[,-which(colnames(data_corse) == "latitude")]
 nbsta_corse         <- table(data_corse$site, data_corse$year)
 
@@ -45,7 +47,8 @@ c_2016 <-  rep(0, nrow(nbsta_corse))
 
 # Bind all the years
 nbsta_corse           <- cbind(nbsta_corse, c_2010, c_2012, c_2015, c_2016)
-nbsta_corse           <- nbsta_corse[, c("c_2010", "2011", "c_2012", "2013", "2014", "c_2015", "c_2016", "2017")]
+nbsta_corse           <- nbsta_corse[, c("c_2010", "2011", "c_2012", "2013", "2014", "c_2015",
+                                         "c_2016", "2017")]
 colnames(nbsta_corse) <- c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017")
 nbsta_corse           <- as.table(nbsta_corse)
 rm(c_2010, c_2012, c_2015, c_2016, data_corse)
@@ -55,7 +58,9 @@ data_cont           <- table[- which(table$region %in% c("Corse")),]
 data_cont           <- data_cont[order(data_cont$longitude),]
 rownames(data_cont) <- NULL
 data_cont           <- unique(data_cont[, c("site", "station", "year", "longitude")])
-data_cont$site      <- factor(data_cont$site, levels = unique(data_cont$site[order(data_cont$longitude, decreasing = TRUE)]))
+data_cont$site      <- factor(data_cont$site,
+                              levels = unique(data_cont$site[order(data_cont$longitude,
+                                                                   decreasing = TRUE)]))
 data_cont           <- data_cont[,-which(colnames(data_cont) == "longitude")]
 nbsta_cont          <- table(data_cont$site, data_cont$year)
 
@@ -65,7 +70,8 @@ c_2014 <-  rep(0, nrow(nbsta_cont))
 
 # Bind all the years
 nbsta_cont           <- cbind(nbsta_cont, c_2011, c_2014)
-nbsta_cont           <- nbsta_cont[, c("2010", "c_2011", "2012", "2013", "c_2014", "2015", "2016", "2017")]
+nbsta_cont           <- nbsta_cont[, c("2010", "c_2011", "2012", "2013", "c_2014", "2015",
+                                       "2016", "2017")]
 colnames(nbsta_cont) <- c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017")
 nbsta_cont           <- as.table(nbsta_cont)
 
@@ -146,10 +152,11 @@ plots <- egg::ggarrange(cont2, cont1, corse, newpage = TRUE, nrow = 1, ncol = 3)
 # Save final plot
 par(mar = c(0,0,0,0))
 plots_leg <- ggpubr::ggarrange(plots, leg, ncol = 2, widths = c(7,1))
-ggplot2::ggsave(filename = hh("output", "01_AppendixS1_FigureS1.pdf"), plot = plots_leg, device = "pdf", family = "sans")
+ggplot2::ggsave(filename = hh("output", "01_AppendixA_FigureA1.pdf"), plot = plots_leg,
+                device = "pdf", family = "sans")
 
 # ----
 
-rm(data, cont1, cont2, corse, df_cont1, df_cont2, df_corse, leg, plots, plots_leg, table, cols, nb_sta_pery, nbsta_cont,
-   nbsta_cont1, nbsta_cont2, nbsta_corse)
+rm(data, cont1, cont2, corse, df_cont1, df_cont2, df_corse, leg, plots, plots_leg, table, cols,
+   nb_sta_pery, nbsta_cont, nbsta_cont1, nbsta_cont2, nbsta_corse)
 graphics.off()

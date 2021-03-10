@@ -32,27 +32,27 @@ devtools::document()
 
 # ----- Appendix S1
 
-source(hh("analysis", "01_AppendixS1.R"))
+source(hh("analysis", "01_AppendixA.R"))
 
 # ----- Appendix S2
 
-source(hh("analysis", "02_AppendixS2.R"))
+source(hh("analysis", "02_AppendixB.R"))
 
 # ----- Appendix S3
 
-source(hh("analysis", "03_AppendixS3.R"))
+source(hh("analysis", "03_AppendixC.R"))
 
 # ----- Appendix S4
 
-source(hh("analysis", "04_AppendixS4.R"))
+source(hh("analysis", "04_AppendixD.R"))
 
 # ----- Appendix S5
 
-source(hh("analysis", "05_AppendixS5.R"))
+source(hh("analysis", "05_AppendixE.R"))
 
 # ----- Appendix S6
 
-source(hh("analysis", "06_AppendixS6.R"))
+source(hh("analysis", "06_AppendixF.R"))
 
 # ----- Figure 3
 
@@ -68,7 +68,7 @@ source(hh("analysis", "09_Figure4.R"))
 
 # ----- Appendix S7
 
-source(hh("analysis", "10_AppendixS7.R"))
+source(hh("analysis", "10_AppendixG.R"))
 
 # ----- Figure 5
 
@@ -80,10 +80,10 @@ source(hh("analysis", "12_Figure6.R"))
 
 # ----- Appendix S8
 
-source(hh("analysis", "13_AppendixS8.R"))
+source(hh("analysis", "13_AppendixH.R"))
 
 # ----- Appendix S9
 
-source(hh("analysis", "14_AppendixS9.R"))
+source(hh("analysis", "14_AppendixI.R"))
 
 # ----

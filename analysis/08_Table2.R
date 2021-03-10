@@ -11,7 +11,7 @@
 #'         François Guilhaumon, \email{francois.guilhaumon@@ird.fr}
 #'
 #' @date 2021/01/12
-##################################################################################################
+###################################################################################################
 
 # Load data ----
 
@@ -34,17 +34,25 @@ rm(quadrat_table, pressures, hillnb)
 # Simplify table ----
 
 # remove threats only keep the last axes of PCA, remove non SES PD and FD, remove unused context
-keep  <- c("esth_score", "quadrat_code", "station", "site", "depth", "qTD", "SES_qPD", "SES_qFD", "Exploitation", "Anthropization" , "substrate_recouv")
+keep  <- c("esth_score", "quadrat_code", "station", "site", "depth", "qTD", "SES_qPD", "SES_qFD",
+           "Exploitation", "Anthropization" , "substrate_recouv")
 table <- as.data.frame(table[,which(colnames(table) %in% keep)])
 
 # Get the columns in the right order
 table           <- table[, keep]
-colnames(table) <- c("esth_score", "quadrat_code", "station", "site", "depth", "qTD", "SES_qPD", "SES_qFD", "Exploitation", "Anthropization","Sediment")
+colnames(table) <- c("esth_score", "quadrat_code", "station", "site", "depth", "qTD", "SES_qPD",
+                     "SES_qFD", "Exploitation", "Anthropization","Sediment")
 
 # Get characters and numbers instead of levels
-if(is.character(table$quadrat_code) == FALSE){table$quadrat_code <- as.character(levels(table$quadrat_code))[table$quadrat_code]}
-if(is.character(table$station) == FALSE){table$station           <- as.character(levels(table$station))[table$station]}
-if(is.character(table$site) == FALSE){table$site                 <- as.character(levels(table$site))[table$site]}
+if(is.character(table$quadrat_code) == FALSE){
+  table$quadrat_code <- as.character(levels(table$quadrat_code))[table$quadrat_code]
+  }
+if(is.character(table$station) == FALSE){
+  table$station           <- as.character(levels(table$station))[table$station]
+  }
+if(is.character(table$site) == FALSE){
+  table$site                 <- as.character(levels(table$site))[table$site]
+  }
 
 rm(keep)
 
@@ -84,7 +92,8 @@ test_indep <- function(graph, df, random_var, random_str, ncores ) {
   code <-  gsub( "graph LR; ","" , graph)
   code <- strsplit(code, ";")[[1]]
   # Independent variables
-  indep <- paste0(parallel::mclapply(1: length(fixed), function(i){ paste0(lapply(1 :length(fixed), function(j){
+  indep <- paste0(parallel::mclapply(1: length(fixed), function(i){ 
+    paste0(lapply(1 :length(fixed), function(j){
     if(j>i){ if(( length(grep(pattern = paste0(fixed[i],"-->",fixed[j]), code)) ==0 && 
                   length(grep(pattern = paste0(fixed[j],"-->",fixed[i]), code)) ==0) == TRUE ){
       paste0(fixed[i],"-",fixed[j]) }}
@@ -95,31 +104,45 @@ test_indep <- function(graph, df, random_var, random_str, ncores ) {
   # Control variable == those who are before the arrow going to one of the indep var
   indep_control        <- rbind.data.frame(lapply(indep, function(indep_couple){
     var                  <- strsplit(indep_couple,"-")[[1]]
-    control              <- lapply(fixed, function(control_var){ if(length(grep(pattern = paste0(control_var,"-->",var[1]),code)) !=0|
-                                                                    length(grep(pattern = paste0(control_var,"-->",var[2]), code)) !=0)
-      control_var})
+    control              <- lapply(fixed, function(control_var){ 
+      if(length(grep(pattern = paste0(control_var, "-->", var[1]), code)) !=0 | 
+         length(grep(pattern = paste0(control_var, "-->", var[2]), code)) !=0)
+      control_var
+      })
     control <- paste0(control[-which(control == "NULL")], collapse = ",")
   }))
   names(indep_control) <- indep
   
   # Compute models, extract proba and compute c = -2*sum(ln(pi))
-  Y         <- lapply(1:ncol(indep_control), function(i){ strsplit(names(indep_control[i]), "-")[[1]][1] })
-  X         <- lapply(1:ncol(indep_control), function(i){ strsplit(names(indep_control[i]), "-")[[1]][2] })
+  Y         <- lapply(1:ncol(indep_control), function(i){ 
+    strsplit(names(indep_control[i]), "-")[[1]][1] 
+    })
+  X         <- lapply(1:ncol(indep_control), function(i){ 
+    strsplit(names(indep_control[i]), "-")[[1]][2] 
+    })
   
   for(i in 1:length(Y)){
-    if (Y[[i]] == "depth"){Y[[i]] <- strsplit(names(indep_control[i]), "-")[[1]][2]}
-    if (strsplit(names(indep_control[i]), "-")[[1]][1] == "depth"){X[[i]] <- strsplit(names(indep_control[i]), "-")[[1]][1] }
+    if (Y[[i]] == "depth"){
+      Y[[i]] <- strsplit(names(indep_control[i]), "-")[[1]][2]
+      }
+    if (strsplit(names(indep_control[i]), "-")[[1]][1] == "depth"){
+      X[[i]] <- strsplit(names(indep_control[i]), "-")[[1]][1]
+      }
   }
   
-  Xs        <- lapply(1:ncol(indep_control), function(i){ paste0(gsub(",","+", indep_control[,i]),"+",X[[i]] )})
-  mod_chars <- lapply(1:length(Y), function(i){ paste0("nlme::lme(",Y[[i]],"~",Xs[[i]],", data = df, random = ", 
-                                                       random_str,", na.action = na.omit, 
-                                                       control = nlme::lmeControl(returnObject = TRUE))" )})
-  mods      <- parallel::mclapply(mod_chars, function(m){ eval(parse(text = m))}, mc.cores = ncores)
+  Xs        <- lapply(1:ncol(indep_control), function(i){ 
+    paste0(gsub(",","+", indep_control[,i]),"+",X[[i]])
+    })
+  mod_chars <- lapply(1:length(Y), function(i){ 
+    paste0("nlme::lme(",Y[[i]],"~",Xs[[i]],", data = df, random = ", random_str,
+", na.action = na.omit, control = nlme::lmeControl(returnObject = TRUE))")
+    })
+  mods      <- parallel::mclapply(mod_chars, function(m){ eval(parse(text = m))},
+                                  mc.cores = ncores)
   sums      <- lapply(mods, summary)  
-  p         <- lapply(1:length(sums), function(i){ sums[[i]]$tTable[X[[i]],"p-value"]})
+  p         <- lapply(1:length(sums), function(i){sums[[i]]$tTable[X[[i]],"p-value"]})
   names(p)  <- indep
-  c         <- as.vector(lapply(p, function(pi){ log(pi) }))
+  c         <- as.vector(lapply(p, function(pi){log(pi) }))
   c         <- unlist(c, use.names = FALSE)
   c         <- (-2)*sum(c)
   k         <- length(p)
@@ -147,7 +170,8 @@ rel <- cbind(c(0,0,0,0,0,0,0,0), # impact of aesthetic on other variables
              c(0,0,1,0,0,0,0,0), # impact of Anthropization (2nd axis PCA)
              c(1,0,1,1,1,0,0,0)) # impact of sediment coverage
 
-colnames(rel) <- c("esth_score", "depth", "qTD", "SES_qPD", "SES_qFD", "Exploitation","Anthropization", "Sediment")
+colnames(rel) <- c("esth_score", "depth", "qTD", "SES_qPD", "SES_qFD", "Exploitation",
+                   "Anthropization", "Sediment")
 rownames(rel) <- colnames(rel)
 # ----
 
@@ -171,7 +195,8 @@ rm(decl)
 
 # select the variables in table that are in the matrix of relationships
 df         <- as.data.frame(table)
-df         <- table[,which(colnames(table) %in% c("quadrat_code", "station", "site", colnames(rel)))]
+df         <- table[,which(colnames(table) %in% c("quadrat_code", "station", "site",
+                                                  colnames(rel)))]
 # normalize numeric values
 rownames(df)           <- df$quadrat_code
 data_loc               <- df[, which(colnames(df) %in% c("quadrat_code", "station", "site"))]
@@ -202,27 +227,30 @@ model <- lapply(1 : nrow(rel), function(i){
   } })
 model    <- model[-which(model == "NULL")] 
 model    <- paste0(model, collapse = ";") # here we have the list of all the lm composing the model
-fit      <- lavaan::cfa(model, data = df) # cfa for Confirmatory Factor Analysis : fit the cfa to df
+fit      <- lavaan::cfa(model, data = df) # cfa for Confirmatory Factor Analysis:
+                                          # fit the cfa to df
 sum      <- lavaan::parameterEstimates(fit, rsquare = TRUE,
                                        se = TRUE, zstat = TRUE,
                                        pvalue = TRUE) 
 # get the rsquared of all the relations between all the variables in the model
 # Explaination of the return of lavaan::parameterEstimates
 # lhs = the estimated parameter ; 
-# op = the operator ("~" for regression ; "=~" can be read as "is measured by" for latent variables ; 
+# op = the operator ("~" for regression ; "=~" can be read as "is measured by" for latent variables; 
 #      "~~" for variances and covariances ; "~1" for itercepts); 
 # rhs = the parameter contributing to the estimated one; est = rsquared in this case;
 # se = standard error ; z = z-values (default) ; p-value = pvalue corresponding to the z-statistic; 
 # ci lower and ci upper = confidence interval bounds
 
-rsquared           <- sum[which(sum$op == "r2"), c("lhs","est")] # % of explained variance of each variable
+rsquared           <- sum[which(sum$op == "r2"), c("lhs","est")] # % of explained variance of
+                                                                 # each variable
 colnames(rsquared) <- c("variable", "rsquared")
 sum                <- sum[-which(sum$op %in% c("~~", "r2")),] # keep only the regressions
 from               <- as.character(sum$rhs)
 to                 <- as.character(sum$lhs)
 weight             <- sum$est
 edges              <- cbind.data.frame(from, to, weight) 
-# Here is the amout of variance explained individually by each variable and the sign of the contribution
+# Here is the amout of variance explained individually by each variable and the sign 
+# of the contribution
 
 # Combine the two tables into one
 SEM_table             <- edges
@@ -239,18 +267,23 @@ add       <- c("depth", NA, NA, NA)
 SEM_table <- rbind(SEM_table, add)
 
 # rename columns and variables
-colnames(SEM_table) <- c("Dependant Variable", "Explaining Variable", "Coefficient", "% of explained variance")
-wrong               <- c("esth_score", "depth", "qTD", "SES_qPD", "SES_qFD", "Exploitation", "Anthropization" ,"Sediment")
-right               <- c("Aesthetic Value", "Depth", "qTD", "qPD_SES", "qFD_SES", "Exploitation", "Anthropization" ,"Sediment")
+colnames(SEM_table) <- c("Dependant Variable", "Explaining Variable", "Coefficient",
+                         "% of explained variance")
+wrong               <- c("esth_score", "depth", "qTD", "SES_qPD", "SES_qFD", "Exploitation", 
+                         "Anthropization","Sediment")
+right               <- c("Aesthetic Value", "Depth", "qTD", "qPD_SES", "qFD_SES", "Exploitation", 
+                         "Anthropization", "Sediment")
 for (i in 1: length(wrong)) {
-  SEM_table[, "Explaining Variable"] <- gsub(wrong[i], right[i], SEM_table[, "Explaining Variable"])
-  SEM_table[, "Dependant Variable"]  <- gsub(wrong[i], right[i], SEM_table[, "Dependant Variable"])
+  SEM_table[, "Explaining Variable"] <- gsub(wrong[i], right[i], 
+                                             SEM_table[, "Explaining Variable"])
+  SEM_table[, "Dependant Variable"]  <- gsub(wrong[i], right[i], 
+                                             SEM_table[, "Dependant Variable"])
 }
 
 # Save
 write.csv(x = SEM_table, file = hh("output", "08_Table2.csv"), row.names = FALSE)
 
-rm(df, edges, fit, rel, rsquared, SEM_table, sum, add, from, i, indep_var, model, pal, right, to, wrong, 
-   test_indep, weight)
+rm(df, edges, fit, rel, rsquared, SEM_table, sum, add, from, i, indep_var, model, pal, right,
+   to, wrong, test_indep, weight)
 
 #----

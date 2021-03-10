@@ -10,13 +10,14 @@
 #'         François Guilhaumon, \email{francois.guilhaumon@@ird.fr}
 #'
 #' @date 2021/01/12
-##################################################################################################
+###################################################################################################
 
 # Load data ----
 
 SEM_table <- read.csv(hh("output", "08_Table2.csv"))
 # remove the explained % of dependant variable and the line of depth
-edges           <- SEM_table[1:(nrow(SEM_table)-1), c("Explaining.Variable", "Dependant.Variable", "Coefficient")]
+edges           <- SEM_table[1:(nrow(SEM_table)-1), 
+                             c("Explaining.Variable", "Dependant.Variable", "Coefficient")]
 colnames(edges) <- c("from", "to", "weight")
 
 # ----
@@ -30,8 +31,10 @@ sub$lwd_df     <- rep(1, nrow(sub)) # width of the line
 sub$border_df  <- rep("black", nrow(sub)) # color of the line
 
 # Correct names
-wrong <- c("esth_score", "depth", "qTD", "SES_qPD", "SES_qFD", "Exploitation", "Anthropization" ,"Sediment")
-right <- c("Aesthetic Value", "Depth", "qTD", "qPD_SES", "qFD_SES", "Exploitation", "Anthropization" ,"Sediment")
+wrong <- c("esth_score", "depth", "qTD", "SES_qPD", "SES_qFD", "Exploitation", 
+           "Anthropization", "Sediment")
+right <- c("Aesthetic Value", "Depth", "qTD", "qPD_SES", "qFD_SES", "Exploitation",
+           "Anthropization", "Sediment")
 for (i in 1: length(wrong)) {
   edges$from <- gsub(wrong[i], right[i], edges$from)
   edges$to <- gsub(wrong[i], right[i], edges$to)
@@ -44,7 +47,8 @@ edges$to      <- as.factor(edges$to)
 n             <- length(union(edges$from, edges$to))
 edges         <- edges[order(edges$weight),] # order the links according to their weight
 pal           <- viridis::viridis(n = n, option = "viridis")
-order_sectors <- c("Depth","Sediment", "Anthropization", "Exploitation", "qFD_SES", "qPD_SES", "qTD", "Aesthetic Value")
+order_sectors <- c("Depth","Sediment", "Anthropization", "Exploitation", "qFD_SES", "qPD_SES",
+                   "qTD", "Aesthetic Value")
 names(pal)    <- order_sectors
 graphics.off()
 
@@ -53,7 +57,9 @@ pdf(hh("output","09_Figure4.pdf"),
 circlize::circos.par(gap.after = c(rep(3,n)))
 circlize::chordDiagram(edges, 
                        grid.col              = pal,
-                       order                 = c("Depth","Sediment", "Anthropization", "Exploitation", "qFD_SES", "qPD_SES", "qTD", "Aesthetic Value"),
+                       order                 = c("Depth","Sediment", "Anthropization",
+                                                 "Exploitation", "qFD_SES", "qPD_SES", "qTD",
+                                                 "Aesthetic Value"),
                        annotationTrack       =  c("name", "grid"),
                        annotationTrackHeight = c(0.03, 0.1),
                        # make the links finish by an arrow

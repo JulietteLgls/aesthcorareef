@@ -1,7 +1,7 @@
 ###################################################################################################
-#'  Appendix S6: Effect of the relative abundance of the 68 species on the aesthetic score.
+#'  Appendix F: Effect of the relative abundance of the 68 species on the aesthetic score.
 #'
-#' This script produces the Langlois et al.'s 2021 paper Appendix S6 Table S1, 
+#' This script produces the Langlois et al.'s 2021 paper Appendix F Table F1, 
 #' i.e. a table of the significant effects of the relative abundance of the 68 species on the 
 #' aesthetic values of the quadrats where they are present. 
 #'
@@ -10,7 +10,7 @@
 #'         François Guilhaumon, \email{francois.guilhaumon@@ird.fr}
 #'
 #' @date 2021/01/12
-##################################################################################################
+###################################################################################################
 
 # Load tables ----
 
@@ -21,7 +21,8 @@ phylo_table   <- read.csv(hh("data", "phylo_table.csv"))
 
 # Select columns ----
 
-data <- quadrat_table[, c(which(colnames(quadrat_table) %in% c("quadrat_code", "esth_score")), grep(pattern = "sp_", colnames(quadrat_table)))]
+data <- quadrat_table[, c(which(colnames(quadrat_table) %in% c("quadrat_code", "esth_score")), 
+                          grep(pattern = "sp_", colnames(quadrat_table)))]
 
 rm(quadrat_table)
 
@@ -54,9 +55,11 @@ data_num <- data_rownames[,which(colnames(data_rownames) %in% colnames(data))]
 sp_names <- colnames(data_num)[-which(colnames(data_num) == "esth_score")]
 
 # give species list all_id and data table dat_cor; 
-# the variabe we want to explain is varcor and we chose the metric we want to use to order the species ("var","pervar","R2","pearson.p)
-# Here we want to use PERVAR the percentage of varcor individualy explained by all the other variables
-pervar    <- look_cor(all_id = sp_names, dat_cor = data_num, respvar = "esth_score", ord = "PERVAR")
+# the variabe we want to explain is varcor and we chose the metric we want to use to order the 
+# species ("var","pervar","R2","pearson.p). Here we want to use PERVAR the percentage of varcor
+# individualy explained by all the other variables
+pervar    <- look_cor(all_id = sp_names, dat_cor = data_num, respvar = "esth_score", 
+                      ord = "PERVAR")
 SPE_order <- pervar$var
 
 # ----
@@ -95,10 +98,10 @@ colnames(app5_tablseS1) <- c("Code", "Name", "Effect", "Standard_Error")
 
 # Save for future use ----
 
-write.csv(x = app5_tablseS1, file = hh("output", "06_AppendixS6_TableS1.csv"), row.names = FALSE)
+write.csv(x = app5_tablseS1, file = hh("output", "06_AppendixF_TableF1.csv"), row.names = FALSE)
 
-rm(data, data_num, last_mod, names, pervar, res, sum_last, codes, eff_type, effect, final_sp, SPE_order, app5_tablseS1,
-   data_rownames, data_slct, final, phylo_table, sp_names)
+rm(data, data_num, last_mod, names, pervar, res, sum_last, codes, eff_type, effect, final_sp, 
+   SPE_order, app5_tablseS1, data_rownames, data_slct, final, phylo_table, sp_names)
 
 # ----
 
