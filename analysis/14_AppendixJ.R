@@ -1,8 +1,8 @@
 ###################################################################################################
-#' Appendix I: Relationship between the aesthetic values and the depth of all stations and between 
+#' Appendix J: Relationship between the aesthetic values and the depth of all stations and between 
 #' the aesthetic values and the longitude of the stations at the east of Marseille.
 #' 
-#' This script produces the Langlois et al.'s 2021 paper Appendix I Figure I.1, i.e.
+#' This script produces the Langlois et al.'s 2021 paper Appendix J Figure J.1, i.e.
 #' a two panels scatterplot of the relationship between the aesthetic values and the depth of all 
 #' stations (left) and the relationship between the aesthetic values and the longitude of the 
 #' stations at the east of Marseille (right).
@@ -64,7 +64,7 @@ modmars <- lm(marseast$esth_score ~ marseast$longitude)
 # Save ----
 
 plots <- ggpubr::ggarrange(poly_depth, longmars, ncol = 2)
-ggplot2::ggsave(plots, filename = hh("output", "14_AppendixI_FigureI1.pdf"), width = 20,
+ggplot2::ggsave(plots, filename = hh("output", "14_AppendixJ_FigureJ1.pdf"), width = 20,
                 height = 10, units = "cm")
 
 rm(list=ls(all=TRUE))

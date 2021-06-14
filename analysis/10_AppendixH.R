@@ -1,8 +1,8 @@
 ###################################################################################################
-#' Appendix G: Relationships between the taxonomic, functional and phylogenetic ranks of the 
+#' Appendix H: Relationships between the taxonomic, functional and phylogenetic ranks of the 
 #' quadrats.
 #' 
-#' This script produces the Langlois et al.'s 2021 paper Appendix G, i.e. a three panels 
+#' This script produces the Langlois et al.'s 2021 paper Appendix H, i.e. a three panels 
 #' scatterplot representing the relationship between  qPDSES rank and TD rank (right), qFDSES rank 
 #' and TD rank (middle) and qPDSES rank and qFDSES rank (right).
 #' 
@@ -89,7 +89,7 @@ modpdfd <- lm(FD_rank ~ PD_rank, data = ecovalue)
 
 threed <- ggpubr::ggarrange(tdpd, tdfd, pdfd, ncol = 3, nrow = 1)
 
-ggplot2::ggsave(filename = hh("output", "10_AppendixG_FigureG1.pdf"), plot = threed, 
+ggplot2::ggsave(filename = hh("output", "10_AppendixH_FigureH1.pdf"), plot = threed, 
        width = 18, height = 9, units = "cm", dpi = 320, family = "sans")
 # ----
 

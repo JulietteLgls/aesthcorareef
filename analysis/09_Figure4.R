@@ -24,17 +24,17 @@ colnames(edges) <- c("from", "to", "weight")
 
 # Chord plot ----
 
-# customise the links to add a dotted border to the negative ones
+# customize the links to add a dotted border to the negative ones
 sub  <- as.data.frame(edges[which(edges$weight<0), 1:2])
 sub$lty_df     <- rep(3, nrow(sub)) # type of the line
 sub$lwd_df     <- rep(1, nrow(sub)) # width of the line
 sub$border_df  <- rep("black", nrow(sub)) # color of the line
 
 # Correct names
-wrong <- c("esth_score", "depth", "qTD", "SES_qPD", "SES_qFD", "Exploitation", 
-           "Anthropization", "Sediment")
-right <- c("Aesthetic Value", "Depth", "qTD", "qPD_SES", "qFD_SES", "Exploitation",
-           "Anthropization", "Sediment")
+wrong <- c("esth_score", "depth", "qTD", "SES_qPD", "SES_qFD", 
+           "Exploitation", "Sediment")
+right <- c("Aesthetic Value", "Depth", "qTD", "qPD_SES", "qFD_SES",
+           "Exploitation", "Sediment")
 for (i in 1: length(wrong)) {
   edges$from <- gsub(wrong[i], right[i], edges$from)
   edges$to <- gsub(wrong[i], right[i], edges$to)
@@ -47,7 +47,7 @@ edges$to      <- as.factor(edges$to)
 n             <- length(union(edges$from, edges$to))
 edges         <- edges[order(edges$weight),] # order the links according to their weight
 pal           <- viridis::viridis(n = n, option = "viridis")
-order_sectors <- c("Depth","Sediment", "Anthropization", "Exploitation", "qFD_SES", "qPD_SES",
+order_sectors <- c("Depth","Sediment", "Exploitation", "qFD_SES", "qPD_SES",
                    "qTD", "Aesthetic Value")
 names(pal)    <- order_sectors
 graphics.off()
@@ -57,8 +57,9 @@ pdf(hh("output","09_Figure4.pdf"),
 circlize::circos.par(gap.after = c(rep(3,n)))
 circlize::chordDiagram(edges, 
                        grid.col              = pal,
-                       order                 = c("Depth","Sediment", "Anthropization",
-                                                 "Exploitation", "qFD_SES", "qPD_SES", "qTD",
+                       order                 = c("Depth","Sediment",
+                                                 "Exploitation", "qFD_SES",
+                                                 "qPD_SES", "qTD",
                                                  "Aesthetic Value"),
                        annotationTrack       =  c("name", "grid"),
                        annotationTrackHeight = c(0.03, 0.1),

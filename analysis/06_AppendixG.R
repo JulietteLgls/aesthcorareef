@@ -1,7 +1,7 @@
 ###################################################################################################
-#'  Appendix F: Effect of the relative abundance of the 68 species on the aesthetic score.
+#'  Appendix G: Effect of the relative abundance of the 68 species on the aesthetic score.
 #'
-#' This script produces the Langlois et al.'s 2021 paper Appendix F Table F1, 
+#' This script produces the Langlois et al.'s 2021 paper Appendix G Table G1, 
 #' i.e. a table of the significant effects of the relative abundance of the 68 species on the 
 #' aesthetic values of the quadrats where they are present. 
 #'
@@ -98,7 +98,7 @@ colnames(app5_tablseS1) <- c("Code", "Name", "Effect", "Standard_Error")
 
 # Save for future use ----
 
-write.csv(x = app5_tablseS1, file = hh("output", "06_AppendixF_TableF1.csv"), row.names = FALSE)
+write.csv(x = app5_tablseS1, file = hh("output", "06_AppendixG_TableG1.csv"), row.names = FALSE)
 
 rm(data, data_num, last_mod, names, pervar, res, sum_last, codes, eff_type, effect, final_sp, 
    SPE_order, app5_tablseS1, data_rownames, data_slct, final, phylo_table, sp_names)

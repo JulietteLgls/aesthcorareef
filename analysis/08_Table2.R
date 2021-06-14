@@ -35,13 +35,13 @@ rm(quadrat_table, pressures, hillnb)
 
 # remove threats only keep the last axes of PCA, remove non SES PD and FD, remove unused context
 keep  <- c("esth_score", "quadrat_code", "station", "site", "depth", "qTD", "SES_qPD", "SES_qFD",
-           "Exploitation", "Anthropization" , "substrate_recouv")
+           "Exploitation" , "substrate_recouv")
 table <- as.data.frame(table[,which(colnames(table) %in% keep)])
 
 # Get the columns in the right order
 table           <- table[, keep]
 colnames(table) <- c("esth_score", "quadrat_code", "station", "site", "depth", "qTD", "SES_qPD",
-                     "SES_qFD", "Exploitation", "Anthropization","Sediment")
+                     "SES_qFD", "Exploitation","Sediment")
 
 # Get characters and numbers instead of levels
 if(is.character(table$quadrat_code) == FALSE){
@@ -80,17 +80,15 @@ rm(keep)
 #' @export
 test_indep <- function(graph, df, random_var, random_str, ncores ) {
   
-  # graph      = graph
-  # df         = df
-  # random_var = random_var
-  # random_str = random_str
-  # ncores     = 4
+  # graph = graph ; df = df; random_var = random_var; random_str = random_str; ncores = 4
   
   # # fixed variables
   fixed    <- colnames(df)[- which(colnames(df) %in% random_var)]
+  
   # code du graph
   code <-  gsub( "graph LR; ","" , graph)
   code <- strsplit(code, ";")[[1]]
+  
   # Independent variables
   indep <- paste0(parallel::mclapply(1: length(fixed), function(i){ 
     paste0(lapply(1 :length(fixed), function(j){
@@ -121,26 +119,42 @@ test_indep <- function(graph, df, random_var, random_str, ncores ) {
     strsplit(names(indep_control[i]), "-")[[1]][2] 
     })
   
+  # Depth is always in the Xs as it can not be explained by anything
+  # same for Exploitation if the other variable is not depth
   for(i in 1:length(Y)){
-    if (Y[[i]] == "depth"){
-      Y[[i]] <- strsplit(names(indep_control[i]), "-")[[1]][2]
-      }
-    if (strsplit(names(indep_control[i]), "-")[[1]][1] == "depth"){
-      X[[i]] <- strsplit(names(indep_control[i]), "-")[[1]][1]
-      }
-  }
+    
+    if (Y[[i]] == "depth"){Y[[i]] <- strsplit(names(indep_control[i]), "-")[[1]][2]}
+    if (strsplit(names(indep_control[i]), "-")[[1]][1] == "depth"){X[[i]] <- strsplit(names(indep_control[i]), "-")[[1]][1] }
+    if (strsplit(indep[i], "-")[[1]][1] == "depth"){
+      a <- strsplit(indep[i], "-")[[1]][1]
+      b <- strsplit(indep[i], "-")[[1]][2]
+      indep[i] <- paste(b, a, sep = "-")
+    }
+    
+    if (Y[[i]] == "Exploitation" & X[[i]] != "depth"){Y[[i]] <- strsplit(names(indep_control[i]), "-")[[1]][2]}
+    if (strsplit(names(indep_control[i]), "-")[[1]][1] == "Exploitation" &
+        strsplit(names(indep_control[i]), "-")[[1]][2] != "depth"){
+      X[[i]] <- strsplit(names(indep_control[i]), "-")[[1]][1]}
+    if (strsplit(indep[i], "-")[[1]][1] == "Exploitation" &
+        strsplit(indep[i], "-")[[1]][2] != "depth"){
+      a <- strsplit(indep[i], "-")[[1]][1]
+      b <- strsplit(indep[i], "-")[[1]][2]
+      indep[i] <- paste(b, a, sep = "-")
+    }
+  } # eo for i
   
+  # Create the character string of the equations to evaluate
   Xs        <- lapply(1:ncol(indep_control), function(i){ 
     paste0(gsub(",","+", indep_control[,i]),"+",X[[i]])
     })
   mod_chars <- lapply(1:length(Y), function(i){ 
-    paste0("nlme::lme(",Y[[i]],"~",Xs[[i]],", data = df, random = ", random_str,
-", na.action = na.omit, control = nlme::lmeControl(returnObject = TRUE))")
-    })
+    paste0("lmerTest::lmer(",Y[[i]],"~",Xs[[i]],"+", random_str, ", data = df)")})
+  
+  
   mods      <- parallel::mclapply(mod_chars, function(m){ eval(parse(text = m))},
                                   mc.cores = ncores)
   sums      <- lapply(mods, summary)  
-  p         <- lapply(1:length(sums), function(i){sums[[i]]$tTable[X[[i]],"p-value"]})
+  p         <- lapply(1:length(sums), function(i){ sums[[i]]$coefficients[X[[i]], "Pr(>|t|)"]})
   names(p)  <- indep
   c         <- as.vector(lapply(p, function(pi){log(pi) }))
   c         <- unlist(c, use.names = FALSE)
@@ -161,17 +175,16 @@ test_indep <- function(graph, df, random_var, random_str, ncores ) {
 # Create the table with relations ----
 
 # must be a squared matrix
-rel <- cbind(c(0,0,0,0,0,0,0,0), # impact of aesthetic on other variables
-             c(0,0,0,0,0,1,1,1), # impact of depth
-             c(1,0,0,1,1,0,0,0), # impact of qTD
-             c(1,0,0,0,1,0,0,0), # impact of SES_qPD
-             c(1,0,0,0,0,0,0,0), # impact of SES_qFD
-             c(0,0,0,0,0,0,1,1), # impact of Exploitation (1st axis PCA)
-             c(0,0,1,0,0,0,0,0), # impact of Anthropization (2nd axis PCA)
-             c(1,0,1,1,1,0,0,0)) # impact of sediment coverage
+rel <- cbind(c(0,0,0,0,0,0,0), # impact of aesthetic on other variables
+             c(0,0,0,0,0,1,1), # impact of depth
+             c(1,0,0,1,1,0,0), # impact of qTD
+             c(1,0,0,0,1,0,0), # impact of SES_qPD
+             c(1,0,0,0,0,0,0), # impact of SES_qFD
+             c(0,0,0,0,0,0,1), # impact of Exploitation (1st axis PCA)
+             c(1,0,1,1,1,0,0)) # impact of sediment coverage
 
-colnames(rel) <- c("esth_score", "depth", "qTD", "SES_qPD", "SES_qFD", "Exploitation",
-                   "Anthropization", "Sediment")
+colnames(rel) <- c("esth_score", "depth", "qTD", "SES_qPD", 
+                   "SES_qFD", "Exploitation", "Sediment")
 rownames(rel) <- colnames(rel)
 # ----
 
@@ -207,7 +220,7 @@ df                     <- merge(x = data_norm, y = data_loc, by = "quadrat_code"
 
 # Set the random variables for pseudo replication
 random_var <- c("site", "station", "quadrat_code")
-random_str <- "~1|site/station/quadrat_code"
+random_str <- "(1|site/station)"
 
 # apply the function
 stat_model <- test_indep(graph, df, random_var, random_str, ncores = 4)  
@@ -269,10 +282,10 @@ SEM_table <- rbind(SEM_table, add)
 # rename columns and variables
 colnames(SEM_table) <- c("Dependant Variable", "Explaining Variable", "Coefficient",
                          "% of explained variance")
-wrong               <- c("esth_score", "depth", "qTD", "SES_qPD", "SES_qFD", "Exploitation", 
-                         "Anthropization","Sediment")
-right               <- c("Aesthetic Value", "Depth", "qTD", "qPD_SES", "qFD_SES", "Exploitation", 
-                         "Anthropization", "Sediment")
+wrong               <- c("esth_score", "depth", "qTD", "SES_qPD", "SES_qFD",
+                         "Exploitation","Sediment")
+right               <- c("Aesthetic Value", "Depth", "qTD", "qPD_SES", "qFD_SES",
+                         "Exploitation", "Sediment")
 for (i in 1: length(wrong)) {
   SEM_table[, "Explaining Variable"] <- gsub(wrong[i], right[i], 
                                              SEM_table[, "Explaining Variable"])

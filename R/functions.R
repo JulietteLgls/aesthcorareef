@@ -73,7 +73,7 @@ look_cor <- function(all_id, dat_cor, respvar, ord){
 #' @param x 
 #' @export
 #' 
-normalize <-  function(x){(x-min(x))/(max(x)-min(x))}
+normalize <-  function(x){(x-mean(x))/sd(x)}
 
 
 #' reduce_mod 

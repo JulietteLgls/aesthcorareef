@@ -1,13 +1,13 @@
 ###################################################################################################
-#'  Appendix E: Hill numbers.
+#'  Appendix F: Hill numbers.
 #'
-#' This script produces the Langlois et al.'s 2021 paper Appendix E:
+#' This script produces the Langlois et al.'s 2021 paper Appendix F:
 #' 
-#' Figure E.1, i.e. a panel of three scatterplots representing the variation of the R2 of 
+#' Figure F.1, i.e. a panel of three scatterplots representing the variation of the R2 of 
 #' the linear relation between the aesthetic values and, respectively qTD (left), qFD (middle),
 #' qPD (right), according to the value of the Hill q coefficient.
 #' 
-#' Figure E.2, i.e. a panel of two scatterplots representing the density of 
+#' Figure F.2, i.e. a panel of two scatterplots representing the density of 
 #' the standardized qFD (left) and the standardized qPD (right).
 #'
 #' @author Juliette Langlois, \email{juliette.a.langlois@@gmail.com},
@@ -17,7 +17,7 @@
 #' @date 2021/01/12
 ###################################################################################################
 
-# Figure S1 ---------------------------------------------------------------------------------------
+# Figure F1 ---------------------------------------------------------------------------------------
 
 # Load data ----
 data_all <- read.csv(hh("data", "quadrat_table.csv"))
@@ -227,7 +227,7 @@ rm(phylo, i, tree_chain, tree, start_time, res, end_time, Rsquared_PD, q_R2_PD, 
 
 graphs <- ggpubr::ggarrange(qtd_plot, qfd_plot, qpd_plot, ncol = 3, nrow = 1, widths = c(1,1,1), 
                             align = "v")
-ggplot2::ggsave(filename = hh("output", "05_AppendixE_FigureE1.pdf"), plot = graphs, width = 18, 
+ggplot2::ggsave(filename = hh("output", "05_AppendixF_FigureF1.pdf"), plot = graphs, width = 18, 
                 height = 8, units = "cm", dpi = 320, family = "sans")
 
 # ----
@@ -355,7 +355,7 @@ densespd <- ggplot2::ggplot(qPD_all, ggplot2::aes(x = SES_qPD)) +
              linetype = "dotdash")
 
 graphs <- ggpubr::ggarrange(densesfd, densespd, ncol = 2, nrow = 1, widths = c(1,1), align = "v")
-ggplot2::ggsave(filename = hh("output", "05_AppendixE_FigureE2.pdf"), plot = graphs, width = 18,
+ggplot2::ggsave(filename = hh("output", "05_AppendixF_FigureF2.pdf"), plot = graphs, width = 18,
                 height = 8, units = "cm", dpi = 320, family = "sans")
 
 # ----

@@ -1,8 +1,8 @@
 ###################################################################################################
-#' Appendix H: Correlation between the aesthetic values of the quadrats and the averaged 
+#' Appendix I: Correlation between the aesthetic values of the quadrats and the averaged 
 #' station value.
 #' 
-#' This script produces the Langlois et al.'s 2021 paper Appendix H Figure H.1, i.e. a four panels
+#' This script produces the Langlois et al.'s 2021 paper Appendix I Figure I.1, i.e. a four panels
 #' scatterplot of the relation between the values of the aesthetic value (up left corner), 
 #' qTD (up right corner), qFDSES (bottom left corner) and qPDSES (bottom right corner) for the 
 #' quadrats and the stations.
@@ -102,7 +102,7 @@ modqpd <- lm(qsta_table$SES_qPD_station ~ qsta_table$SES_qPD_quadrat)
 # Save ----
 
 plots <- ggpubr::ggarrange(esth_qs, qtd_qs, qfd_qs, qpd_qs, ncol = 2, nrow = 2)
-ggplot2::ggsave(plots, filename = hh("output", "13_AppendixH_FigureH1.pdf"),  width = 20,
+ggplot2::ggsave(plots, filename = hh("output", "13_AppendixI_FigureI1.pdf"),  width = 20,
                 height = 15, units = "cm")
 
 rm(list=ls(all=TRUE))
